@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gyt.system.mapping.UserMapper" >
+  <resultMap id="UserResultMap" type="gyt.system.model.UserInfo" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <id column="user_name" property="userName" jdbcType="LONGVARCHAR" />
+    <id column="pwd" property="pwd" jdbcType="LONGVARCHAR" />
+    <id column="real_name" property="realName" jdbcType="LONGVARCHAR" />
+    <id column="sex" property="sex" jdbcType="INTEGER" />
+    <id column="phone" property="phone" jdbcType="LONGVARCHAR" />
+    <id column="email" property="email" jdbcType="LONGVARCHAR" />
+    <id column="status" property="status" jdbcType="INTEGER" />
+    <id column="address" property="address" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  <resultMap id="RoleResultMap" type="gyt.system.model.RoleInfo" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <id column="role_name" property="roleName" jdbcType="LONGVARCHAR" />
+    <id column="role_dec" property="roleDec" jdbcType="LONGVARCHAR" />
+    <id column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="MenuResultMap" type="gyt.system.model.MenuInfo" >
+    <id column="menu_id" property="menuId" jdbcType="INTEGER" />
+    <id column="parent_menu_id" property="parentMenuId" jdbcType="INTEGER" />
+    <id column="menu_name" property="menuName" jdbcType="LONGVARCHAR" />
+    <id column="image" property="image" jdbcType="LONGVARCHAR" />
+    <id column="cimage" property="cimage" jdbcType="LONGVARCHAR" />
+    <id column="url" property="url" jdbcType="LONGVARCHAR" />
+  </resultMap>
+	
+  <resultMap id="DepResultMap" type="gyt.system.model.DepartmentInfo" >
+    <id column="dep_id" property="depId" jdbcType="INTEGER" />
+    <id column="parent_dep_id" property="parentDepId" jdbcType="INTEGER" />
+    <id column="dep_name" property="depName" jdbcType="LONGVARCHAR" />
+    <id column="dep_dec" property="depDec" jdbcType="LONGVARCHAR" />
+    <id column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="findUserByName" resultMap="UserResultMap" parameterType="map">
+    	select user_id,user_name,pwd,real_name,sex,phone,status,address from tbl_user_info
+    	 where user_name = #{userName} and pwd = #{pwd}
+  </select>
+  
+  <select id="findRoleByUserId" resultMap="RoleResultMap" parameterType="java.lang.Integer">
+    	select tri.role_id,tri.role_name,tri.role_dec,tri.status from tbl_role_info as tri       
+		join tbl_role_user as tru on tri.role_id = tru.role_id      
+		where tru.user_id = #{userId}
+  </select>
+  
+  <select id="findMenuListByRoleId" resultMap="MenuResultMap" parameterType="java.lang.Integer">
+    	select tmi.menu_id,tmi.parent_menu_id,tmi.menu_name,tmi.image,tmi.cimage,tmi.url
+    	from tbl_menu_info as tmi join tbl_role_menu as trm on tmi.menu_id = trm.menu_id 
+    	where trm.role_id = #{roleId}
+  </select>
+  
+  <select id="findMenuListByMenuId" resultMap="MenuResultMap" parameterType="java.lang.Integer">
+    	select tmi.menu_id,tmi.parent_menu_id,tmi.menu_name,tmi.image,tmi.cimage,tmi.url
+    	from tbl_menu_info as tmi 
+    	where tmi.parent_menu_id = #{menuId}
+  </select>
+  
+  <select id="findUserList" resultMap="UserResultMap" parameterType="map">
+    	select user_id,user_name,pwd,real_name,sex,phone,status,address,email from tbl_user_info
+    	where 1=1 limit #{pageStart},#{barNumbers}
+  </select>
+  
+  <select id="findUserTotal" resultType="java.lang.Integer" parameterType="map">
+    	select count(user_id) from tbl_user_info
+  </select>
+  
+  <select id="findRoleList" resultMap="RoleResultMap" parameterType="map">
+    	select tri.role_id,tri.role_name,tri.role_dec,tri.status from tbl_role_info as tri
+  </select>
+  
+  <select id="findDepByParentId" resultMap="DepResultMap" parameterType="java.lang.Integer">
+    	select dep_id,parent_dep_id,dep_name,dep_dec,status from tbl_department_info where parent_dep_id = #{depId}
+  </select>
+  
+<!--   <select id="findUserByNameNotice" parameterType="java.lang.String" resultMap="java.lang.Integer">
+  		select user_id from tbl_user_info where=#{name}
+  </select> -->
+</mapper>

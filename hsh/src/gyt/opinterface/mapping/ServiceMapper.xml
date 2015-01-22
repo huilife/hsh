@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gyt.opinterface.mapping.ServiceMapper" >
+  <resultMap id="BaseResultMap" type="gyt.opinterface.action.ServiceBean" >
+    <id column="model_code" property="code" jdbcType="INTEGER" />
+    <id column="model_name" property="modelName" jdbcType="LONGVARCHAR" />
+    <id column="model_method" property="modelMethod" jdbcType="LONGVARCHAR" />
+    <id column="model_des" property="modelDes" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <select id="selectServiceAll" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    	select model_code,model_name,model_method,model_des from tbl_service_model
+  </select>
+</mapper>

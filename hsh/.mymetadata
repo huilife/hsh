@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="hsh"
+  id="myeclipse.1371435988840"
+  context-root="/hsh"
+  j2ee-spec="6.0"
+  archive="hsh.war">
+  <attributes>
+    <attribute name="webrootdir" value="web" />
+  </attributes>
+</project-module>
+

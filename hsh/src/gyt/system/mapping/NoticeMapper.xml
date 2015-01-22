@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gyt.system.mapping.NoticeMapper" >
+	<parameterMap type="java.util.Map" id="delParameterMap">
+		<parameter property="ids" />
+	</parameterMap>
+  <!-- 插入新公告 -->
+  <insert id="insert" parameterType="gyt.system.model.NoticeInfo">
+  		insert into tbl_notice_info VALUES (null,#{title},#{context},sysdate(),#{time},#{rel_user_id},
+		#{limit_user},#{read_user},#{file})
+  </insert>
+  <!-- 根据id删除一条记录 -->
+  <delete id="deleteNoticeByIds" parameterType="java.lang.String" >
+  		delete from tbl_notice_info where notice_id = #{id}
+  </delete>
+  <!-- 根据id修改记录 -->
+  <update id="updateNoticeById" parameterType="gyt.system.model.NoticeInfo">
+  		update tbl_notice_info set title=#{title,jdbcType=VARCHAR},context=#{context,jdbcType=VARCHAR},rel_time=sysdate(),rel_user_id=#{rel_user_id,jdbcType=INTEGER},
+  		limit_user=#{limit_user,jdbcType=VARCHAR},read_user=null where notice_id=#{notice_id}
+  </update>
+  <!-- 查询总记录条数 -->
+  <select id="findNoticeTotal" resultType="java.lang.Integer">
+  		select count(notice_id) from tbl_notice_info where rel_time &lt;= sysdate()
+  </select>
+  <select id="findNoticeTotal1" resultType="java.lang.Integer">
+  		select count(notice_id) from tbl_notice_info where rel_time &gt; date_format(sysdate(),'%Y-%m-%d')
+  </select>
+  <!-- 查询记录用于页面显示 -->
+  <select id="findNoticeList" parameterType="map"
+  resultType="gyt.system.model.NoticeInfo">
+  		select notice_id,title,context,rel_time,file,user_name from 
+  		(tbl_notice_info  join tbl_user_info on(rel_user_id=user_id) )
+  		where rel_time &lt;= sysdate() 
+  		order by rel_time desc limit #{pageStart},#{barNumbers}
+  </select>
+  <select id="findNoticeById" parameterType="java.lang.Integer" 
+  	resultType="gyt.system.model.NoticeInfo">
+  		select * from tbl_notice_info where notice_id=#{id}
+  </select>
+  <select id="findNoticeList1" parameterType="map"
+  resultType="gyt.system.model.NoticeInfo">
+  		select notice_id,title,context,rel_time,file,user_name from 
+  		(tbl_notice_info  join tbl_user_info on(rel_user_id=user_id) )
+  		where user_id = #{user_id} and rel_time &gt;= date_format(sysdate(),'%Y-%m-%d')
+  		order by rel_time desc limit #{pageStart},#{barNumbers} 
+  </select>
+  <!-- 下面是实现上一条公告和下一条公告 -->
+  <select id="displayPage" parameterType="java.lang.Integer"
+  resultType="gyt.system.model.NoticeInfo">
+  		SELECT a.*,(SELECT COUNT(rel_time) FROM tbl_notice_info WHERE rel_time &lt; a.rel_time) 
+  		rownum from tbl_notice_info a WHERE notice_id = #{id}
+  </select>
+  <select id="displayPages" parameterType="java.lang.Integer"
+  resultType="gyt.system.model.NoticeInfo">
+  		SELECT * FROM (SELECT a.*,(SELECT COUNT(rel_time) 
+  		FROM tbl_notice_info WHERE rel_time &lt; a.rel_time) 
+  		rownum from tbl_notice_info a) c WHERE c.rownum = #{rownum}
+  </select>
+</mapper>
